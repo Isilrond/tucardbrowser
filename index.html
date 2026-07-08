@@ -679,14 +679,10 @@ function load(){
       else if(s.state==='offline')   {el.style.color='#3a5577';el.textContent='📴 Offline';setTimeout(()=>el.textContent='',4000);}
     });
   }
-  if(window.electronAPI&&window.electronAPI.loadData){
-    window.electronAPI.loadData((progress,rawJson)=>{
-      if(rawJson===null){ bar.style.width=progress+'%'; msg.textContent='Reading... '+progress+'%'; }
-      else {
-        bar.style.width='85%'; msg.textContent='Parsing cards...';
-        setTimeout(()=>{
-          try{
-            const d=JSON.parse(rawJson);
+  fetch('tu_data.json')
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    const d=JSON.parse(rawJson);
             cards=d.cards; skNames=d.skill_names; skDescs=d.skill_descs; skDescsAll=d.skill_descs_all||{}; skDescsFac=d.skill_descs_fac||{}; skDescsAllFac=d.skill_descs_all_fac||{}; fusMap=d.fusion_map; fusFrom=d.fusion_from||{}; fusTo=d.fusion_to||{}; idToName=d.id_to_name||{}; baseFusFrom=d.base_fusion_from||{}; baseFusTo=d.base_fusion_to||{}; summonedBy=d.summoned_by||{}; fusFrom=d.fusion_from||{}; fusTo=d.fusion_to||{}; idToName=d.id_to_name||{}; baseFusFrom=d.base_fusion_from||{}; baseFusTo=d.base_fusion_to||{}; summonedBy=d.summoned_by||{};
             bar.style.width='100%'; msg.textContent='Done!';
             setTimeout(init,100);
@@ -697,7 +693,10 @@ function load(){
         },50);
       }
     });
-  } else {
+  })
+  .catch(function(e){
+    document.getElementById('loading').innerHTML='<div style="color:#f44;padding:40px;font-family:sans-serif">Fehler beim Laden von tu_data.json:<br>'+e+'</div>';
+  }); else {
     msg.style.color='#ff4444'; msg.textContent='Error: not running in Electron';
   }
 }
@@ -759,10 +758,7 @@ function bindUI(){
 // ════════════════════════════════════════════════════════
 function imgSrc(pic){
   if(!pic) return '';
-  if(window.electronAPI&&window.electronAPI.imageBase) return window.electronAPI.imageBase+pic;
-  const b=document.getElementById('imgpath-input')?.value?.trim()||'';
-  if(!b) return pic;
-  return b.endsWith('/')||b.endsWith('\\')?b+pic:b+'/'+pic;
+  return 'images/'+pic;
 }
 function refreshImgs(){
   document.querySelectorAll('[data-pic]').forEach(el=>{
