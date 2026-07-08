@@ -752,6 +752,7 @@ function bindUI(){
 // ════════════════════════════════════════════════════════
 function imgSrc(pic){
   if(!pic) return '';
+  if(!pic.includes('.')) pic=pic+'.jpg';
   return 'images/'+pic;
 }
 function refreshImgs(){
