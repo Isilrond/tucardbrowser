@@ -755,6 +755,14 @@ function imgSrc(pic){
   if(!pic.includes('.')) pic=pic+'.jpg';
   return 'images/'+pic;
 }
+function imgErr(el){
+  const src=el.src;
+  if(src.endsWith('.jpg')){
+    el.src=src.replace(/\.jpg$/,'.png');
+  } else if(src.endsWith('.png')){
+    el.src=''; // both failed, give up
+  }
+}
 function refreshImgs(){
   document.querySelectorAll('[data-pic]').forEach(el=>{
     const p=el.dataset.pic; if(p) el.src=imgSrc(p);
@@ -877,7 +885,7 @@ function renderGrid(){
     el.innerHTML=`
       <div class="tile-rar"></div>
       <div class="tile-art">
-        ${src?`<img src="${src}" data-pic="${d.picture}" alt="" loading="lazy" onerror="this.style.display='none'">`:''}
+        ${src?`<img src="${src}" data-pic="${d.picture}" alt="" loading="lazy" onerror="imgErr(this)">`:''}
         <div class="tile-no-art" style="${src?'display:none':''}">
           <div style="font-size:14px;color:#1a2a3a">🖼</div>
           <div>${d.picture||'no image'}</div>
@@ -1021,7 +1029,7 @@ function renderDet(c,li){
       <div class="ic-costbadge">${DELAY_ICONS[String(d.cost||0)]?`<img src="${DELAY_ICONS[String(d.cost||0)]}" title="Cost ${d.cost||0}">`:'<span>'+(d.cost||0)+'</span>'}</div>
     </div>
     <div class="ic-art">
-      ${src?`<img src="${src}" data-pic="${pic}" alt="" onerror="this.style.display='none'">`:''}
+      ${src?`<img src="${src}" data-pic="${pic}" alt="" onerror="imgErr(this)">`:''}
       <div class="ic-art-noimg" style="${src?'display:none':''}">No image<br><small>${pic||''}</small></div>
       <div class="ic-fac-strip">
         <div class="ic-fac-name" style="color:${f.color}">${f.name}</div>
@@ -1099,7 +1107,7 @@ function renderDet(c,li){
                 <div class="ic-cardname">${sc.name}</div>
                 <div class="ic-costbadge">${DELAY_ICONS[String(sd.cost||0)]?`<img src="${DELAY_ICONS[String(sd.cost||0)]}" title="Cost ${sd.cost||0}">`:'<span>'+(sd.cost||0)+'</span>'}</div>
               </div>
-              <div class="ic-art">${ssrc?`<img src="${ssrc}" alt="" onerror="this.style.display='none'">`:
+              <div class="ic-art">${ssrc?`<img src="${ssrc}" onerror="imgErr(this)" alt="" onerror="imgErr(this)">`:
                 `<div class="ic-art-noimg">No image</div>`}
                 <div class="ic-fac-strip">
                   <div class="ic-fac-name" style="color:${sf.color}">${sf.name}</div>
@@ -1154,7 +1162,7 @@ function renderDet(c,li){
                   <div class="ic-type-wrap">${FACTION_ICONS[sc.type]?`<img src="${FACTION_ICONS[sc.type]}" style="width:22px;height:22px;image-rendering:pixelated">`:typeIcon(sc.type,sc.unit_type,sf.color)}</div>
                   <div class="ic-cardname">${sc.name}</div><div class="ic-costbadge">${DELAY_ICONS[String(sd.cost||0)]?`<img src="${DELAY_ICONS[String(sd.cost||0)]}" title="Cost ${sd.cost||0}">`:'<span>'+(sd.cost||0)+'</span>'}</div>
                 </div>
-                <div class="ic-art">${ssrc?`<img src="${ssrc}" alt="" onerror="this.style.display='none'">`:
+                <div class="ic-art">${ssrc?`<img src="${ssrc}" onerror="imgErr(this)" alt="" onerror="imgErr(this)">`:
                   `<div class="ic-art-noimg">No image</div>`}
                   <div class="ic-fac-strip"><div class="ic-fac-name" style="color:${sf.color}">${sf.name}</div>
                     <div class="ic-fac-set">${SETS[sc.set]||sc.set} · ${RAR[String(sc.rarity)]?.name||'?'} · ${sc.unit_type}</div></div>
