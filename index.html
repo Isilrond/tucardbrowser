@@ -759,7 +759,7 @@ function bindUI(){
     if(e.target===document.getElementById('flt-modal')) closeFlt();
   });
   // toggle filter icon buttons (rarity, faction, delay, fusion, type)
-  ['fd-rar','fd-fac','fd-delay','fd-fus','fd-utype'].forEach(id=>{
+  ['fd-rar','fd-fac','fd-delay','fd-fus','fd-utype','fd-set'].forEach(id=>{
     document.getElementById(id)?.querySelectorAll('.fib').forEach(b=>
       b.addEventListener('click',()=>b.classList.toggle('on')));
   });
