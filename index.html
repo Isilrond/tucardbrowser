@@ -668,39 +668,33 @@ function load(){
   const bar=document.getElementById('load-bar');
   const msg=document.getElementById('load-msg');
   msg.textContent='Loading card database...'; bar.style.width='10%';
-  if(window.electronAPI&&window.electronAPI.onUpdateStatus){
+if(window.electronAPI&&window.electronAPI.onUpdateStatus){
     window.electronAPI.onUpdateStatus(function(s){
       const el=document.getElementById('update-status'); if(!el) return;
-      if(s.state==='checking')       {el.style.color='#3a6688';el.textContent='🔍 Prüfe Kartendaten...';}
-      else if(s.state==='up-to-date'){el.style.color='#2a6644';el.textContent='✓ Aktuell';setTimeout(()=>el.textContent='',3000);}
-      else if(s.state==='downloading'){el.style.color='#aa8822';el.textContent=`⬇ ${s.count} XML(s)...`;}
-      else if(s.state==='progress')  {el.style.color='#aa8822';el.textContent=`⬇ ${s.pct}% – ${s.file||''}`;}
-      else if(s.state==='done')      {el.style.color='#2a9955';el.textContent=`✓ ${s.cards} Karten (${s.version})`;setTimeout(()=>el.textContent='',5000);}
-      else if(s.state==='offline')   {el.style.color='#3a5577';el.textContent='📴 Offline';setTimeout(()=>el.textContent='',4000);}
+      if(s.state==='checking'){el.textContent='Checking for updates...';}
+      else if(s.state==='downloading'){el.textContent='Downloading update '+Math.round(s.progress||0)+'%';}
+      else if(s.state==='ready'){el.textContent='Update ready - restart to apply';}
+      else if(s.state==='error'){el.textContent='Update error: '+s.error;}
+      setTimeout(()=>el.textContent='',4000);
     });
   }
   fetch('tu_data.json')
   .then(function(r){ return r.json(); })
   .then(function(d){
-    const d=JSON.parse(rawJson);
-            cards=d.cards; skNames=d.skill_names; skDescs=d.skill_descs; skDescsAll=d.skill_descs_all||{}; skDescsFac=d.skill_descs_fac||{}; skDescsAllFac=d.skill_descs_all_fac||{}; fusMap=d.fusion_map; fusFrom=d.fusion_from||{}; fusTo=d.fusion_to||{}; idToName=d.id_to_name||{}; baseFusFrom=d.base_fusion_from||{}; baseFusTo=d.base_fusion_to||{}; summonedBy=d.summoned_by||{}; fusFrom=d.fusion_from||{}; fusTo=d.fusion_to||{}; idToName=d.id_to_name||{}; baseFusFrom=d.base_fusion_from||{}; baseFusTo=d.base_fusion_to||{}; summonedBy=d.summoned_by||{};
-            bar.style.width='100%'; msg.textContent='Done!';
-            setTimeout(init,100);
-          } catch(e){
-            document.getElementById('load-msg').style.color='#ff4444';
-            document.getElementById('load-msg').textContent='Parse error: '+e.message;
-          }
-        },50);
-      }
-    });
+    cards=d.cards; skNames=d.skill_names; skDescs=d.skill_descs;
+    skDescsAll=d.skill_descs_all||{}; skDescsFac=d.skill_descs_fac||{};
+    skDescsAllFac=d.skill_descs_all_fac||{};
+    fusMap=d.fusion_map; fusFrom=d.fusion_from||{}; fusTo=d.fusion_to||{};
+    idToName=d.id_to_name||{}; baseFusFrom=d.base_fusion_from||{};
+    baseFusTo=d.base_fusion_to||{}; summonedBy=d.summoned_by||{};
+    bar.style.width='100%'; msg.textContent='Done!';
+    setTimeout(init,100);
   })
   .catch(function(e){
-    document.getElementById('loading').innerHTML='<div style="color:#f44;padding:40px;font-family:sans-serif">Fehler beim Laden von tu_data.json:<br>'+e+'</div>';
-  }); else {
-    msg.style.color='#ff4444'; msg.textContent='Error: not running in Electron';
-  }
+    msg.style.color='#ff4444';
+    msg.textContent='Error loading tu_data.json: '+e;
+  });
 }
-
 // ════════════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════════════
