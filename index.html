@@ -376,11 +376,16 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
   .sort-btn{padding:3px 7px;font-size:10px}
   #filter-btn{padding:4px 10px;font-size:11px}
 
-  /* Grid: allow touch scroll - release overflow on all containers */
-  html,body{overflow:auto;height:auto}
-  #grid-area{overflow:visible;flex:none}
-  #grid-scroller{overflow:visible;flex:none;height:auto}
-  #card-grid{margin-bottom:60px}
+  /* Grid: 3 columns, vertical scroll only */
+  html,body{overflow-x:hidden;overflow-y:auto;height:auto;width:100vw}
+  #grid-area{overflow:visible;flex:none;width:100vw}
+  #grid-scroller{overflow:visible;flex:none;height:auto;padding:6px}
+  #card-grid{
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:4px!important;
+    margin-bottom:60px;
+    width:100%
+  }
 
   /* Detail modal: full screen, scrollable */
   #det-modal{align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -414,7 +419,7 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 <!-- APP -->
 <div id="app">
   <div id="topbar">
-    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.4</div>
+    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.5</div>
     <div id="topbar-count">Loading...</div>
     <div id="sort-wrap">
       <div class="sort-btn active" data-sort="name"     onclick="setSort('name')"    >Name    <span class="sort-arrow">↑</span></div>
@@ -872,10 +877,11 @@ function calcGrid() {
   const gw = Math.max(ga.clientWidth, window.innerWidth) - 24;
   const gh = Math.max(ga.clientHeight, window.innerHeight - 50) - FOOT_H - 20;
   if (gw < 100) { requestAnimationFrame(calcGrid); return; } // not laid out yet
-  const cols = Math.min(13, Math.max(3, Math.floor((gw + TILE_GAP) / (TILE_MIN_W + TILE_GAP))));
+  const isMobile = window.innerWidth <= 600;
+  const cols = isMobile ? 3 : Math.min(13, Math.max(3, Math.floor((gw + TILE_GAP) / (TILE_MIN_W + TILE_GAP))));
   const tileW = Math.floor((gw - (cols-1)*TILE_GAP) / cols);
   const tileH = Math.round(tileW / 1.05) + 40;
-  const rows  = Math.min(5, Math.max(1, Math.floor((gh + TILE_GAP) / (tileH + TILE_GAP))));
+  const rows  = isMobile ? 9999 : Math.min(5, Math.max(1, Math.floor((gh + TILE_GAP) / (tileH + TILE_GAP))));
   document.documentElement.style.setProperty('--grid-cols', cols);
   const newPage = cols * rows;
   if (newPage !== PAGE) {
