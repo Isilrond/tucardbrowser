@@ -369,8 +369,9 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 
 /* ── MOBILE RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 600px) {
-  /* Topbar: sticky, stack vertically */
-  #topbar{height:auto;flex-wrap:wrap;padding:6px 8px;gap:4px;position:sticky;top:0;z-index:500}
+  /* Topbar: fixed at top */
+  #topbar{height:auto;flex-wrap:wrap;padding:6px 8px;gap:4px;position:fixed;top:0;left:0;right:0;z-index:500}
+  body{padding-top:80px}
   #topbar-logo{font-size:11px;letter-spacing:0;width:100%}
   #topbar-count{font-size:10px}
   .sort-btn{padding:3px 7px;font-size:10px}
@@ -430,7 +431,7 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 <!-- APP -->
 <div id="app">
   <div id="topbar">
-    <div id="topbar-logo">Tyrant Unleashed Card Browser v3.0</div>
+    <div id="topbar-logo">Tyrant Unleashed Card Browser v3.1</div>
     <div id="topbar-count">Loading...</div>
     <div id="sort-wrap">
       <div class="sort-btn active" data-sort="name"     onclick="setSort('name')"    >Name    <span class="sort-arrow">↑</span></div>
