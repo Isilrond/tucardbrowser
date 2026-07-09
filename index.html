@@ -409,10 +409,12 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 }
 #art-lightbox.open{display:flex}
 #art-lightbox img{
-  max-width:92vw;max-height:92vh;
+  width:min(92vw,92vh);
+  height:min(92vw,92vh);
   object-fit:contain;border-radius:6px;
   box-shadow:0 0 60px rgba(0,0,0,.9);
-  animation:lbIn .2s ease
+  animation:lbIn .2s ease;
+  image-rendering:auto
 }
 @keyframes lbIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 </style>
@@ -429,7 +431,7 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 <!-- APP -->
 <div id="app">
   <div id="topbar">
-    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.6</div>
+    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.7</div>
     <div id="topbar-count">Loading...</div>
     <div id="sort-wrap">
       <div class="sort-btn active" data-sort="name"     onclick="setSort('name')"    >Name    <span class="sort-arrow">↑</span></div>
