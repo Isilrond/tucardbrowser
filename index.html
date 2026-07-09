@@ -64,7 +64,7 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 
 /* ── GRID AREA ── */
 #grid-area{flex:1;overflow:hidden;display:flex;flex-direction:column}
-#grid-scroller{flex:1;overflow:hidden;padding:10px 12px;display:flex;flex-direction:column}
+#grid-scroller{flex:1;overflow:hidden;padding:10px 12px;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch}
 #grid-scroller::-webkit-scrollbar{width:7px}
 #grid-scroller::-webkit-scrollbar-track{background:#0a1018}
 #grid-scroller::-webkit-scrollbar-thumb{background:#1a3348;border-radius:3px}
@@ -366,6 +366,30 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 .fd-ok{background:linear-gradient(180deg,#b04818,#7a2e08);
   border:2px solid #d05828;color:#fff}
 .fd-ok:hover{background:linear-gradient(180deg,#cc5520,#9a3810)}
+
+/* ── MOBILE RESPONSIVE ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Topbar: stack vertically */
+  #topbar{height:auto;flex-wrap:wrap;padding:6px 8px;gap:4px}
+  #topbar-logo{font-size:11px;letter-spacing:0;width:100%}
+  #topbar-count{font-size:10px}
+  .sort-btn{padding:3px 7px;font-size:10px}
+  #filter-btn{padding:4px 10px;font-size:11px}
+
+  /* Grid: allow touch scroll */
+  #grid-scroller{overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+  /* Detail modal: full screen, scrollable */
+  #det-modal{align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #det-modal > div{width:100vw;max-width:100vw}
+  .ic-det-row{flex-direction:column;max-height:none}
+  #det-ic-wrap{width:100%;max-width:100%}
+  .ic{width:100%!important}
+  #det-info{width:100%;max-width:100%;border-radius:0;border-left:1px solid #1a3040;border-top:none;max-height:none}
+  #det-summon{width:100%;min-width:unset}
+  #det-close{top:4px;right:4px}
+  .lvl-tabs{flex-wrap:wrap}
+}
 </style>
 </head>
 <body>
@@ -380,7 +404,7 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 <!-- APP -->
 <div id="app">
   <div id="topbar">
-    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.1</div>
+    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.3</div>
     <div id="topbar-count">Loading...</div>
     <div id="sort-wrap">
       <div class="sort-btn active" data-sort="name"     onclick="setSort('name')"    >Name    <span class="sort-arrow">↑</span></div>
@@ -763,6 +787,11 @@ function bindUI(){
     document.getElementById(id)?.querySelectorAll('.fib').forEach(b=>
       b.addEventListener('click',()=>b.classList.toggle('on')));
   });
+  window.addEventListener('popstate',function(){
+    if(!document.getElementById('det-modal').classList.contains('h')){
+      closeDet();
+    }
+  });
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){
       if(!document.getElementById('det-modal').classList.contains('h')) closeDet();
@@ -949,8 +978,11 @@ function goP(p){page=p;renderGrid();document.getElementById('grid-scroller').scr
 // ════════════════════════════════════════════════════════
 //  CARD DETAIL
 // ════════════════════════════════════════════════════════
-function openDet(c){selCard=c;selLvl=0;renderDet(c,0);document.getElementById('det-modal').classList.remove('h');}
-function closeDet(){document.getElementById('det-modal').classList.add('h');}
+function openDet(c){selCard=c;selLvl=0;renderDet(c,0);document.getElementById('det-modal').classList.remove('h');history.pushState({det:true},'');}
+function closeDet(){
+  document.querySelectorAll('.ic-art.zoomed').forEach(el=>el.classList.remove('zoomed'));
+  document.getElementById('det-modal').classList.add('h');
+}
 
 function renderDet(c,li){
   selLvl=li;
