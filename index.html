@@ -399,12 +399,22 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
   .lvl-tabs{flex-wrap:wrap}
 }
 
-/* ── ART ZOOM MODE ───────────────────────────────────────────── */
-.ic-art{cursor:pointer;transition:height .3s ease}
-.ic-art img{transition:transform .3s ease}
-.ic-art.zoomed{height:340px;cursor:zoom-out}
-.ic-art.zoomed .ic-fac-strip{opacity:0!important;pointer-events:none;transition:opacity .2s}
-.ic-art.zoomed img{transform:scale(1.12);transform-origin:center center}
+/* ── ART LIGHTBOX ────────────────────────────────────────────── */
+.ic-art{cursor:zoom-in}
+#art-lightbox{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.92);
+  align-items:center;justify-content:center;
+  cursor:zoom-out;backdrop-filter:blur(4px)
+}
+#art-lightbox.open{display:flex}
+#art-lightbox img{
+  max-width:92vw;max-height:92vh;
+  object-fit:contain;border-radius:6px;
+  box-shadow:0 0 60px rgba(0,0,0,.9);
+  animation:lbIn .2s ease
+}
+@keyframes lbIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 </style>
 </head>
 <body>
@@ -419,7 +429,7 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 <!-- APP -->
 <div id="app">
   <div id="topbar">
-    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.5</div>
+    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.6</div>
     <div id="topbar-count">Loading...</div>
     <div id="sort-wrap">
       <div class="sort-btn active" data-sort="name"     onclick="setSort('name')"    >Name    <span class="sort-arrow">↑</span></div>
@@ -803,7 +813,9 @@ function bindUI(){
       b.addEventListener('click',()=>b.classList.toggle('on')));
   });
   window.addEventListener('popstate',function(){
-    if(!document.getElementById('det-modal').classList.contains('h')){
+    if(document.getElementById('art-lightbox').classList.contains('open')){
+      closeLightbox();
+    } else if(!document.getElementById('det-modal').classList.contains('h')){
       closeDet();
     }
   });
@@ -995,6 +1007,14 @@ function goP(p){page=p;renderGrid();document.getElementById('grid-scroller').scr
 //  CARD DETAIL
 // ════════════════════════════════════════════════════════
 function openDet(c){selCard=c;selLvl=0;renderDet(c,0);document.getElementById('det-modal').classList.remove('h');history.pushState({det:true},'');}
+function openLightbox(src){
+  document.getElementById('art-lb-img').src=src;
+  document.getElementById('art-lightbox').classList.add('open');
+  history.pushState({lb:true},'');
+}
+function closeLightbox(){
+  document.getElementById('art-lightbox').classList.remove('open');
+}
 function closeDet(){
   document.querySelectorAll('.ic-art.zoomed').forEach(el=>el.classList.remove('zoomed'));
   document.getElementById('det-modal').classList.add('h');
@@ -1098,7 +1118,7 @@ function renderDet(c,li){
       <div class="ic-cardname">${c.name||'(ID:'+c.id+')'}</div>
       <div class="ic-costbadge">${DELAY_ICONS[String(d.cost||0)]?`<img src="${DELAY_ICONS[String(d.cost||0)]}" title="Cost ${d.cost||0}">`:'<span>'+(d.cost||0)+'</span>'}</div>
     </div>
-    <div class="ic-art" onclick="this.classList.toggle('zoomed')">
+    <div class="ic-art" onclick="if(this.querySelector('img'))openLightbox(this.querySelector('img').src)">
       ${src?`<img src="${src}" data-pic="${pic}" alt="" onerror="imgErr(this)">`:''}
       <div class="ic-art-noimg" style="${src?'display:none':''}">No image<br><small>${pic||''}</small></div>
       <div class="ic-fac-strip">
@@ -1312,5 +1332,7 @@ function clearFlt(){
 
 load();
 </script>
+
+<div id="art-lightbox" onclick="closeLightbox()"><img id="art-lb-img" src="" alt=""></div>
 </body>
 </html>
