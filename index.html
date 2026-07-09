@@ -376,8 +376,11 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
   .sort-btn{padding:3px 7px;font-size:10px}
   #filter-btn{padding:4px 10px;font-size:11px}
 
-  /* Grid: allow touch scroll */
-  #grid-scroller{overflow-y:auto;-webkit-overflow-scrolling:touch}
+  /* Grid: allow touch scroll - release overflow on all containers */
+  html,body{overflow:auto;height:auto}
+  #grid-area{overflow:visible;flex:none}
+  #grid-scroller{overflow:visible;flex:none;height:auto}
+  #card-grid{margin-bottom:60px}
 
   /* Detail modal: full screen, scrollable */
   #det-modal{align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -390,6 +393,13 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
   #det-close{top:4px;right:4px}
   .lvl-tabs{flex-wrap:wrap}
 }
+
+/* ── ART ZOOM MODE ───────────────────────────────────────────── */
+.ic-art{cursor:pointer;transition:height .3s ease}
+.ic-art img{transition:transform .3s ease}
+.ic-art.zoomed{height:340px;cursor:zoom-out}
+.ic-art.zoomed .ic-fac-strip{opacity:0!important;pointer-events:none;transition:opacity .2s}
+.ic-art.zoomed img{transform:scale(1.12);transform-origin:center center}
 </style>
 </head>
 <body>
@@ -404,7 +414,7 @@ html,body{height:100%;background:#161c24 url('data:image/jpeg;base64,data:image/
 <!-- APP -->
 <div id="app">
   <div id="topbar">
-    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.3</div>
+    <div id="topbar-logo">Tyrant Unleashed Card Browser v2.4</div>
     <div id="topbar-count">Loading...</div>
     <div id="sort-wrap">
       <div class="sort-btn active" data-sort="name"     onclick="setSort('name')"    >Name    <span class="sort-arrow">↑</span></div>
@@ -1082,7 +1092,7 @@ function renderDet(c,li){
       <div class="ic-cardname">${c.name||'(ID:'+c.id+')'}</div>
       <div class="ic-costbadge">${DELAY_ICONS[String(d.cost||0)]?`<img src="${DELAY_ICONS[String(d.cost||0)]}" title="Cost ${d.cost||0}">`:'<span>'+(d.cost||0)+'</span>'}</div>
     </div>
-    <div class="ic-art">
+    <div class="ic-art" onclick="this.classList.toggle('zoomed')">
       ${src?`<img src="${src}" data-pic="${pic}" alt="" onerror="imgErr(this)">`:''}
       <div class="ic-art-noimg" style="${src?'display:none':''}">No image<br><small>${pic||''}</small></div>
       <div class="ic-fac-strip">
