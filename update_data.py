@@ -64,7 +64,18 @@ def parse_cards(raw_bytes):
         rarity=gv(unit,'rarity') or '1'; delay=gv(unit,'delay') or '0'
         fusion_lvl=gv(unit,'fusion_level') or '0'; asset_bndl=gv(unit,'asset_bundle') or ''
         set_num=int(set_id)
-        unit_type=('commander' if set_num==7000 else 'structure' if set_num in (8000,8500) else 'assault')
+        uid_int=int(uid)
+        if   uid_int < 1000:  unit_type='assault'
+        elif uid_int < 2000:  unit_type='commander'
+        elif uid_int < 3001:  unit_type='structure'
+        elif uid_int < 7995:  unit_type='assault'
+        elif uid_int < 10000: unit_type='structure'
+        elif uid_int < 17000: unit_type='assault'
+        elif uid_int < 25000: unit_type='structure'
+        elif uid_int < 30000: unit_type='commander'
+        elif uid_int < 50000: unit_type='assault'
+        elif uid_int < 55001: unit_type='structure'
+        else:                 unit_type='assault'
         skills=[s for s in (parse_skill(sk) for sk in unit.findall('skill')) if s]
         upgrades=[]; prev={'picture':picture,'attack':attack,'health':health,'cost':cost,'delay':delay,'fusion_level':fusion_lvl,'asset_bundle':asset_bndl}
         for upg in unit.findall('upgrade'):
